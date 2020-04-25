@@ -1,0 +1,224 @@
+Best Time to Buy and Sell Stock II
+Solution
+	Say you have an array prices for which the ith element is the price of a given stock on day i.
+	Design an algorithm to find the maximum profit. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).
+Note: You may not engage in multiple transactions at the same time (i.e., you must sell the stock before you buy again).
+
+Example 1:
+	Input: [7,1,5,3,6,4]
+	Output: 7
+	Explanation: Buy on day 2 (price = 1) and sell on day 3 (price = 5), profit = 5-1 = 4.
+             	Then buy on day 4 (price = 3) and sell on day 5 (price = 6), profit = 6-3 = 3.
+Example 2:
+	Input: [1,2,3,4,5]
+	Output: 4
+	Explanation: Buy on day 1 (price = 1) and sell on day 5 (price = 5), profit = 5-1 = 4.
+             	Note that you cannot buy on day 1, buy on day 2 and sell them later, as you are
+             	engaging multiple transactions at the same time. You must sell before buying again.
+Example 3:
+	Input: [7,6,4,3,1]
+	Output: 0
+	Explanation: In this case, no transaction is done, i.e. max profit = 0.
+ 
+Constraints:
+	1 <= prices.length <= 3 * 10 ^ 4
+	0 <= prices[i] <= 10 ^ 4
+
+
+解题要点：
+	1，找最大数
+	2，最大数左边找逆序数，
+	3，最大数右边重复上面的过程
+	
+	不断重复以上思想
+
+JAVA版本：
+package besttimestock;
+/*
+ *   找逆序数
+ *   n a b m
+ *    if n < m  and b > a
+ *        a-n + m-b > m -n
+ *    
+ * */
+
+import java.util.Arrays;
+
+public class Solution {
+	
+	//找出最大值
+	public static int findMax(int[] prices,int start,int end) {
+		int len = end - start;
+		if(len==0) {
+			return 0;
+		}
+		int max = prices[start];
+		for(int i=start+1;i<end;i++) {
+			max = Math.max(max, prices[i]);
+		}
+		return max;
+	}
+	
+	//找出最大值的序号
+	public static int findMaxNumber(int[] prices,int start,int end) {
+		int no = 0;
+		int len = end - start;
+		if(len==0) {
+			return 0;
+		}
+		int max = prices[start];
+		no = start;
+		for(int i=start+1;i<end;i++) {
+			if(max < prices[i]) {
+				no = i;
+				max = prices[i];
+			}
+		}
+		return no;		
+	}
+	
+	//找出最大值左边，第一个与它差值最大的数
+	public static int findMinCloseValue(int[] prices, int start,int end, int max) {
+		int len = end - start;
+		if(len==0) {
+			return 0;
+		}
+		int value = max - prices[end-1];
+		for(int i=end-1; i>=start; i--) {
+			value = Math.max(value, max-prices[i]);
+		}
+		return value;
+	}
+	
+	//找出最大值左边，第一个与它差值最大，且序号最小的数的序号
+	public static int findMinClose(int[] prices, int start,int end, int max) {
+		int len = end - start;
+		if(len==0) {
+			return 0;
+		}
+		int min = end-1;
+		int value = max - prices[end-1];
+		for(int i=end-1; i>=start; i--) {
+			if(value < max-prices[i]) {
+				min = i;
+			}
+		}
+		return min;
+	}
+	
+	// 判断是否存在逆序数
+	public static boolean reverseNumberExists(int[] prices, int start, int end) {
+		int len = end - start;
+		if(len == 0) {
+			return false;
+		}
+		for(int i=end-1; i>start; i--) {
+			System.out.println("prices[i-1]: "+prices[i-1] +"  prices[i]: "+prices[i]);
+			if(prices[i] < prices[i-1] && i-1 != start) {   //  12  1  13  不存在逆序数，
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// 逆序数存在时，获取最靠近最大数的逆序数的右边第一个数        1 2  8  4  5  15  -> 4
+	public static int reverseNumber(int[] prices, int start, int end) {
+		int len = end - start;
+		if(len == 0) {
+			return 0;
+		}	
+		for(int i=end-1; i>start; i--) {
+			if(prices[i] < prices[i-1] && i-1 != start) {   //  12  1  13  不存在逆序数，
+				return prices[i];
+			}
+		}
+		return 0;
+	}
+	
+	//逆序数存在时，获取最靠近最大数的逆序数的右边第一个数的索引          1 2  8  4  5  15  -> 3
+	public static int reverseNumberNo(int[] prices, int start, int end) {
+		int len = end - start;
+		if(len == 0) {
+			return 0;
+		}	
+		for(int i=end-1; i>start; i--) {
+			if(prices[i] < prices[i-1] && i-1 != start) {   //  12  1  13  不存在逆序数，
+				return i;
+			}
+		}
+		return 0;
+	}
+	
+	//逆序数不存在时，最小数的索引         12  1  13  不存在逆序数，    索引 = 1
+	public static int noReverseNumberNo(int[] prices, int start, int end) {
+		int len = end - start;
+		if(len == 0) {
+			return 0;
+		}	
+		
+		if(prices[start]> prices[start +1]) {
+			return start + 1;
+		}else {
+			return start;
+		}
+	}
+	
+	public static int maxProfitValue(int[] prices, int start, int end) {
+		int maxValue = 0;
+		int maxNo = 0;
+		int leftp = 0;
+		int rightp = 0;
+		int profit = 0;
+		int tprofit = 0;
+		
+		boolean reverse = true;
+		int firstReverse = 0;
+		int reverseNo = 0;
+		
+		maxValue = findMax(prices, start, end);
+		maxNo = findMaxNumber(prices, start, end);
+		System.out.println(">>   maxNo -:" + maxNo + " maxValue -: " + maxValue);
+		//最大数左边
+		if( maxNo > start ) {
+			reverse = reverseNumberExists(prices, start, maxNo);
+			if(reverse == true) { //存在逆序数
+				firstReverse = reverseNumber(prices, start, maxNo); 
+				reverseNo = reverseNumberNo(prices, start, maxNo);
+				System.out.println(">>   存在逆序数   firstReverse:" + firstReverse + " reverseNo -: " + reverseNo);
+				tprofit = maxValue - firstReverse;
+				System.out.println(">>   tprofit -:" + tprofit);
+				System.out.println(">>   start -:" + start + " end -: " + reverseNo);
+				profit = maxProfitValue(prices, start, reverseNo);
+				leftp = tprofit + profit;
+			}else {
+				start = noReverseNumberNo(prices, start, maxNo);
+				System.out.println(">>   不存在逆序数   start:" + start + " end -: " + end);
+				leftp = findMinCloseValue(prices, start, maxNo,maxValue);
+				System.out.println(">>   profit -:" + profit);
+			}		
+		}
+		
+		//最大数右边
+		if(maxNo+1 < end-1) {  // 一个数无意义，跳出
+			System.out.println("右边     maxNo+1 -:" + (maxNo+ 1) + " end -: " + end);
+			rightp = maxProfitValue(prices, maxNo + 1, end);
+		}
+
+		//System.out.println("minNo -:" + minNo + " profit -: " + profit);
+		System.out.println("profit-: "+ profit + " left profit -: " + leftp  + " right profit -: " + rightp);
+		return leftp + rightp;
+	}
+	
+    public static int maxProfit(int[] prices) {
+    	int max = 0;
+    	max = maxProfitValue(prices, 0, prices.length);
+    	return max;
+    }
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int[] prices = {6,1,3,2,4,7};//{7,1,5,3,6,4};
+		int max = maxProfit(prices);
+		System.out.println(Arrays.toString(prices)+" "+"The Stock max profit:"+ max);
+	}
+
+}

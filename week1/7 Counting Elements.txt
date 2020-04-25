@@ -1,0 +1,128 @@
+  Counting Elements
+Solution
+	Given an integer array arr, count element x such that x + 1 is also in arr.
+	If there're duplicates in arr, count them seperately.
+ 
+Example 1:
+	Input: arr = [1,2,3]
+	Output: 2
+	Explanation: 1 and 2 are counted cause 2 and 3 are in arr.
+Example 2:
+	Input: arr = [1,1,3,3,5,5,7,7]
+	Output: 0
+	Explanation: No numbers are counted, cause there's no 2, 4, 6, or 8 in arr.
+Example 3:
+	Input: arr = [1,3,2,3,5,0]
+	Output: 3
+	Explanation: 0, 1 and 2 are counted cause 1, 2 and 3 are in arr.
+Example 4:
+	Input: arr = [1,1,2,2]
+	Output: 2
+	Explanation: Two 1s are counted cause 2 is in arr.
+ 
+Constraints:
+	1 <= arr.length <= 1000
+	0 <= arr[i] <= 1000
+
+JAVA
+
+package ce;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Solution {
+	
+	//排序
+	public static void sortArrays(int[] arr) {
+		Arrays.parallelSort(arr);
+	}
+	
+	//对排序后的元素  获得每个元素出现的次数
+	public static Map<Integer, Integer> arraysMap(int[] arr) {
+		Map<Integer, Integer> numTimes = new HashMap<Integer, Integer>();
+		
+		int len = arr.length;
+		int tmp = arr[0];
+		int count = 0;
+		for(int i=0; i<len; i++) {
+			if(arr[i] == tmp) {
+				count +=1;
+			}
+			else {
+				numTimes.put(tmp, count);
+				tmp = arr[i];
+				count = 1;
+			}
+		}
+		numTimes.put(tmp, count);
+		return numTimes;
+	}
+	
+	//对排序后元素去重
+	public static List<Integer> arraysSet(int[] arr) {
+		List<Integer> sortArray = new ArrayList<Integer>();
+		int len = arr.length;
+		int tmp = arr[0];
+		sortArray.add(tmp);
+		for(int i=0; i<len; i++) {
+			if(arr[i] != tmp) {
+				sortArray.add(arr[i]);
+				tmp = arr[i];
+			}
+		}
+		return sortArray;
+	}
+	
+	//满足的元素
+	public static List<Integer> countArrays(List<Integer> arrList){
+		List<Integer> list = new ArrayList<Integer>();
+		
+		int tmp = arrList.get(0);
+        for(int i=1;i<arrList.size();i++) {
+        	if(tmp + 1 == arrList.get(i)) {
+        		list.add(tmp);	
+        	}
+        	tmp = arrList.get(i);
+        }
+		return list;
+	}
+	
+	public static int countSum(List<Integer> arrList, Map<Integer, Integer> arrMap) {
+		int sum = 0;
+		int num = 0;
+		Iterator<Integer> it = arrList.iterator();
+		while(it.hasNext()) {
+			num = arrMap.get(it.next());
+			sum = sum + num;
+		}
+		return sum;
+	}
+	
+	public static int countElements(int[] arr) {
+		int sum = 0;
+		Map<Integer, Integer> arrMap = new HashMap<Integer, Integer>();
+		List<Integer> arrList = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<Integer>();
+		sortArrays(arr);           // 排序
+		arrMap = arraysMap(arr);   // 计算元素次数
+		arrList = arraysSet(arr);  // 去重
+		list = countArrays(arrList); //符合要求的元素，
+		sum = countSum(list, arrMap);
+		return sum;
+    }
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int[] arr = {1,3,2,3,5,0};
+		int sum = 0;
+		sum = countElements(arr);
+		System.out.println(" arr:  " +Arrays.toString(arr) + " CE   " + sum);
+	}
+}

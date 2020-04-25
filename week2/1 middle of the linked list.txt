@@ -1,0 +1,116 @@
+  Middle of the Linked List
+Solution
+	Given a non-empty, singly linked list with head node head, return a middle node of linked list.
+	If there are two middle nodes, return the second middle node.
+ 
+Example 1:
+	Input: [1,2,3,4,5]
+	Output: Node 3 from this list (Serialization: [3,4,5])
+	The returned node has value 3.  (The judge's serialization of this node is [3,4,5]).
+	Note that we returned a ListNode object ans, such that:
+	ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, and ans.next.next.next = NULL.
+Example 2:
+	Input: [1,2,3,4,5,6]
+	Output: Node 4 from this list (Serialization: [4,5,6])
+	Since the list has two middle nodes with values 3 and 4, we return the second one.
+ 
+Note:
+	The number of nodes in the given list will be between 1 and 100.
+
+
+关键点：java实现链表
+
+
+JAVA:
+
+自己补充实现这部分。
+public class ListNode {
+	int val;
+	ListNode next;
+	ListNode(int x){
+		val = x;
+		next = null;
+	}
+}
+
+在leetcode上，只需要提交这部分，
+public class Solution {
+	// 将数组变成list
+	public ListNode creatList(int[] arr) {
+		ListNode head = null;
+		ListNode cursor = null;
+		for(int i=0; i< arr.length; i++) {
+			ListNode ln = new ListNode(arr[i]);
+			if(head ==null) {
+				head = ln;
+				cursor = ln;
+			}else {
+				cursor.next = ln;
+				cursor = ln;
+			}
+		}
+		return head;
+	}
+	
+	//求列表长度
+	public int getListLength(ListNode head) {
+		int len = 0;
+		
+		ListNode cursor = head;
+		while(cursor != null) {
+			len += 1;
+			cursor = cursor.next;
+		}
+		return len;
+	}
+	
+	//求中间
+	public int getMiddleLength(int len) {
+		return len/2;
+	}
+	
+	//获取中间列表
+	public ListNode getMiddleNode(ListNode head, int middle) {
+		int num = 0;
+		
+		ListNode cursor = head;
+		while(num < middle) {
+			num += 1;
+			cursor = cursor.next;
+		}
+		return cursor;	
+	}
+	
+    public ListNode middleNode(ListNode head) {
+		int len = 0;
+		int middle = 0;
+		
+		len = getListLength(head);
+		middle = getMiddleLength(len);
+		ListNode mlist = getMiddleNode(head, middle);
+		return mlist;
+    }
+    
+    public void display(ListNode head) {
+		ListNode cursor = head;
+		System.out.print("[");
+		while(cursor != null) {
+			System.out.print(" " + cursor.val);
+			cursor = cursor.next;
+		}
+		System.out.print("]");
+    }
+    
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int[] arr = {1,2,3,4,5,6};
+		
+		Solution s = new Solution();
+		ListNode mlist = null;
+
+		ListNode list = s.creatList(arr);
+		mlist = s.middleNode(list);
+		s.display(mlist);
+	}
+}
+

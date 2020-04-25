@@ -1,0 +1,86 @@
+ 	Group Anagrams
+Solution
+	Given an array of strings, group anagrams together.
+Example:
+	Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+	Output:
+	[
+  	["ate","eat","tea"],
+  	["nat","tan"],
+  	["bat"]
+	]
+Note:
+	All inputs will be in lowercase.
+	The order of your output does not matter.
+
+
+JAVA:
+
+package groupAna;
+
+import java.util.List;
+import java.util.Vector;
+import java.util.Arrays;
+import java.util.Iterator;
+
+public class Solution {
+
+	// 将字符串排序
+	public static String sortedSting(String str) {
+		char[] strchar = null;
+		String sortedString=null;
+		if(str == null)
+			return null;
+		strchar = str.toCharArray();
+		Arrays.parallelSort(strchar);
+		sortedString = String.valueOf(strchar);
+		return sortedString;
+	}
+	
+	//获取索引位置
+	public static int getStringIndex(Vector<String> kind, String sortedString) {
+		int index =0;
+		if(!kind.contains(sortedString)) {
+			kind.add(sortedString);
+		}
+		index = kind.indexOf(sortedString);
+		return index;
+	}
+	
+	public static List<List<String>> groupAnagrams(String[] strs){
+		int len = strs.length;
+		if(len==0)
+			return null;
+		
+		int index = 0;
+		String sortedString=null;
+		Vector<String> kind = new Vector<String>();
+		Vector<List<String>> ret = new Vector<List<String>>();
+		int size = 0;
+		for(int i=0; i<len; i++) {
+			sortedString = sortedSting(strs[i]);
+			index = getStringIndex(kind, sortedString);
+			
+			size =ret.size();
+			if(index >= size) {
+				Vector<String> tmp = new Vector<String>();
+				tmp.add(strs[i]);
+				ret.add(index, tmp);
+			}else {
+				ret.get(index).add(strs[i]);
+			}
+		}
+		
+		return ret;
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
+		List<List<String>> ret = groupAnagrams(strs);
+		Iterator<List<String>> it = ret.iterator();
+		while(it.hasNext()) {
+			System.out.println("  " + it.next());
+		}
+	}
+}
