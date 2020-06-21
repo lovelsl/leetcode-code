@@ -1,0 +1,77 @@
+  Last Stone Weight
+Solution
+	We have a collection of stones, each stone has a positive integer weight.
+	Each turn, we choose the two heaviest stones and smash them together.  Suppose the stones have weights x and y with x <= y.  The result of this smash is:
+		If x == y, both stones are totally destroyed;
+		If x != y, the stone of weight x is totally destroyed, and the stone of weight y has new weight y-x.
+	At the end, there is at most 1 stone left.  Return the weight of this stone (or 0 if there are no stones left.)
+ 
+Example 1:
+	Input: [2,7,4,1,8,1]
+	Output: 1
+Explanation: 
+	We combine 7 and 8 to get 1 so the array converts to [2,4,1,1,1] then,
+	we combine 2 and 4 to get 2 so the array converts to [2,1,1,1] then,
+	we combine 2 and 1 to get 1 so the array converts to [1,1,1] then,
+	we combine 1 and 1 to get 0 so the array converts to [1] then that's the value of last stone.
+ 
+Note:
+	1 <= stones.length <= 30
+	1 <= stones[i] <= 1000
+
+
+这道题答案很简单，很容易实现。大顶堆，小顶堆 直接上java得PriorityQueue
+
+做之前，打算用排序树做，但是又现成结构就不直接拿来用了
+
+这里对堆，做一个推广：4亿条数据，在2G内存里，取前一千个。很有意思对吧，堆得内存又限制，但是树缺可以无限得插入，结构越来越大
+
+
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+public class Solution {
+
+	Comparator<Integer> IntegerComparator = new Comparator<Integer>() {
+		@Override
+		public int compare(Integer a, Integer b) {
+			return b-a;
+		}
+	};
+	
+    public int lastStoneWeight(int[] stones) {
+    	int big = 0;
+    	int small = 0;
+    	int tmp = 0;
+    	
+    	PriorityQueue<Integer> pq = new PriorityQueue<Integer>(IntegerComparator);
+    	
+    	
+    	for(int i:stones) {
+    		pq.add(i);
+    	}
+    	System.out.println(pq);
+    	
+    	while(pq.size()>1) {
+    		big = pq.poll();
+    		small = pq.poll();
+    		System.out.println("big number:" + big);
+    		System.out.println("small number:" + small);
+    		tmp = big -small;
+    		pq.add(tmp);
+    	}
+    	
+    	return pq.poll();
+    }
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int a[] = {2,7,4,1,8,1};
+		int result = 0;
+		Solution s = new Solution();
+		result = s.lastStoneWeight(a);
+		System.out.println("result:" + result);
+	}
+
+}
+

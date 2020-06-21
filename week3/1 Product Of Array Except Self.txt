@@ -1,0 +1,71 @@
+  Product of Array Except Self
+Solution
+	Given an array nums of n integers where n > 1,  return an array output such that output[i] is equal to the product of all the elements of nums except nums[i].
+Example:
+	Input:  [1,2,3,4]
+	Output: [24,12,8,6]
+Constraint: It's guaranteed that the product of the elements of any prefix or suffix of the array (including the whole array) fits in a 32 bit integer.
+Note: Please solve it without division and in O(n).
+Follow up:
+Could you solve it with constant space complexity? (The output array does not count as extra space for the purpose of space complexity analysis.)
+
+注意：不能用除法：
+注意代码执行效率
+
+这道题最简答案是做两个for循环套着解答，但是时间效率太高：n*n  
+
+参考解答：
+对于一个给定的数组nums[1,2,3,4]，我们用一个res[4]的数组来存放结果，res中存放的数据应是
+	res[0]=2*3*4
+	res[1]=1*3*4
+	res[2]=1*2*4
+	res[3]=1*2*3
+2*3*4，3*4，4
+1*2*3， 1*2， 1
+以上这样的结构，可以在一次访问中得到结果，也就是，上面的计算结果，效率为n+n
+最终为3n
+
+
+JAVA:
+public class Solution {
+
+    public int[] productExceptSelf(int[] nums) {
+        int[] products = new int[nums.length];
+        int[] h = new int[nums.length];
+        int[] q = new int[nums.length];
+        
+        h[nums.length-1] = 1;
+        for(int i=nums.length-2; i>=0; i--) {
+        	h[i] = nums[i+1];
+        	h[i] = h[i] * h[i+1];
+        }
+
+        q[0] = 1;
+        for(int i=1; i< nums.length; i++) {
+        	q[i] = nums[i-1];
+        	q[i] = q[i] * q[i-1];
+        }
+        
+        for(int i=0; i<nums.length; i++ ){
+        	products[i] = q[i] * h[i];
+        }
+        
+        return products;
+    }
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int a[] = {1,2,3,4};
+		int r[] = new int[a.length];
+		
+		Solution s = new Solution();
+		r = s.productExceptSelf(a);
+		
+		for(int i=0; i<r.length; i++ ){
+			System.out.println("result =" + r[i]);
+        }
+		
+	}
+
+}
+

@@ -1,0 +1,164 @@
+  Diameter of Binary Tree
+Solution
+	Given a binary tree, you need to compute the length of the diameter of the tree. The diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root. 
+Example:
+	Given a binary tree 
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+
+	Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3]. 
+Note: 
+	The length of path between two nodes is represented by the number of edges between them. 
+
+
+图中找路径，不要被迷惑，直接找每一个节点的左右分支的深度，然后计算出和就是图中的路径长度，然后找最大值就可以
+
+JAVA:
+TreeNode.java
+package diameter;
+
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    TreeNode() {	
+    }
+    
+    TreeNode(int val) {
+    	this.val = val; 
+    }
+    
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+    
+	public int addLeftNode(TreeNode node) {
+		this.left = node;
+		return 0;
+	}
+	
+	public int addRightNode(TreeNode node) {
+		this.right = node;
+		return 0;
+	}
+}
+
+
+Tree.java
+package diameter;
+
+public class Tree {
+	//获取树的深度
+	public int depthOfBinaryTree(TreeNode root) {
+		int leftDepth = 0;
+		int rightDepth = 0;
+		if(root==null) {
+			return 0;
+		}
+
+		if(root.left != null) {
+			leftDepth = depthOfBinaryTree(root.left) + 1;
+		}
+		if(root.right != null) {
+			rightDepth = depthOfBinaryTree(root.right) + 1;
+		}
+		if(leftDepth == 0 && rightDepth == 0) {
+			return 0;
+		}else {
+			if(leftDepth < rightDepth) {
+				return rightDepth;
+			}else {
+				return leftDepth;
+			}
+		}
+	}
+	
+	//获取节点的最大路径
+	public int diameterOfNode(TreeNode root) {
+		int left = 0;
+		int right = 0;
+		if(root==null) {
+			return 0;
+		}
+		if(root.left != null) {
+			left = depthOfBinaryTree(root.left) + 1;
+		}
+		if(root.right != null) {
+			right = depthOfBinaryTree(root.right) + 1;
+		}
+		
+		return left + right;
+	}
+	
+	//前序遍历所有节点，同时算每一个节点的深度，选出最大的
+	public int preOrderTravel(TreeNode root, int max) {
+		int tmp = 0;
+		int ltmp = 0;
+		int rtmp = 0;
+		if(root == null) {
+			return 0;
+		}
+		tmp = diameterOfNode(root);
+		if(tmp > max) {
+			max = tmp;
+		}
+		
+		if(root.left != null) {
+			ltmp = preOrderTravel(root.left, max);
+			if(ltmp > max) {
+				max = ltmp;
+			}
+		}
+
+		if(root.right != null) {
+			rtmp = preOrderTravel(root.right, max);	
+			if(rtmp > max) {
+				max = rtmp;
+			}
+		}
+
+		return max;
+	}
+	
+	
+    public int diameterOfBinaryTree(TreeNode root) {
+    	int max = preOrderTravel(root, 0);
+        return max;
+    }
+    
+}
+
+
+
+main
+package diameter;
+
+public class Solution {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Tree t = new Tree();
+		
+		TreeNode n1 = new TreeNode(1);
+		TreeNode n2 = new TreeNode(2);
+		TreeNode n3 = new TreeNode(3);
+		TreeNode n4 = new TreeNode(4);
+		TreeNode n5 = new TreeNode(5);
+		
+		n1.addLeftNode(n2);
+		n1.addRightNode(n3);
+		n2.addLeftNode(n4);
+		n2.addRightNode(n5);
+		
+		int depth = t.diameterOfBinaryTree(n1);
+		System.out.println("The binary tree depth:" + depth);
+		
+	}
+
+}
